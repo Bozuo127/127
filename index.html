@@ -38,20 +38,37 @@ font-size:12px;
 color:inherit;
 }
 
-section{
+/* STRIVE 超大标题 */
+.hero{
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
 text-align:center;
-padding:20px;
 }
 
-h1{
-font-size:52px;
+.hero h1{
+font-size:64px;
+font-weight:700;
+letter-spacing:-2px;
 margin:0;
-font-weight:600;
+}
+
+/* 页面 */
+section{
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+padding:40px 20px;
+}
+
+h2{
+font-size:40px;
+margin-bottom:10px;
 }
 
 input{
@@ -59,8 +76,8 @@ padding:12px;
 border-radius:12px;
 border:1px solid #ccc;
 text-align:center;
-margin-top:10px;
 width:220px;
+margin-top:10px;
 }
 
 button{
@@ -84,63 +101,45 @@ font-size:14px;
 margin-top:10px;
 }
 
-/* 留言列表 */
-#list{
-margin-top:15px;
-width:300px;
-text-align:left;
-}
-
 .msg{
-display:flex;
-justify-content:space-between;
-padding:8px;
+margin-top:10px;
+width:300px;
 border-bottom:1px solid #ddd;
+padding:6px;
 font-size:14px;
+text-align:left;
 }
 </style>
 </head>
 
 <body>
 
+<!-- 顶部 -->
 <div class="topbar">
-<button onclick="toggleLang()">EN/中</button>
 <button onclick="toggleTheme()">🌓</button>
 <button onclick="toggleMusic()">🎵</button>
 </div>
 
-<!-- LOGIN -->
-<section id="login">
-<h1>Say My Name</h1>
+<!-- 🔥 HERO -->
+<div class="hero">
+<h1>STRIVE FOR YOUR FUTURE</h1>
+<p class="small">Ye Erqi</p>
+</div>
 
-<input id="name" placeholder="name">
-<button onclick="check()">Enter</button>
-
-<p id="msg" class="small"></p>
-
-<!-- 更稳定音乐源（必须用户点击播放） -->
-<audio id="music" loop>
-<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c9b2c8f5b.mp3?filename=soft-piano-ambient-110397.mp3" type="audio/mpeg">
-</audio>
-</section>
-
-<!-- MAIN -->
-<section id="main" style="display:none">
-
-<h1>叶尔祺</h1>
-
+<!-- ABOUT -->
+<section>
+<h2>About</h2>
 <p>
 宁波大学 · 电气工程 · 大二 · 19岁<br>
-🏓 乒乓球 ⚽ 足球 📚 球状闪电<br>
-🎵 Hey Jude<br><br>
-<span class="small">strive for your future</span>
+🏓 乒乓球 ⚽ 足球 📚 阅读《球状闪电》<br>
+🎵 Hey Jude<br>
+✝ Christian
 </p>
 </section>
 
-<!-- Q&A（留言系统） -->
-<section id="qa" style="display:none">
-
-<h1>Q&A</h1>
+<!-- Q&A -->
+<section>
+<h2>Q&A</h2>
 
 <input id="q" placeholder="leave a message">
 <button onclick="addMsg()">Send</button>
@@ -148,56 +147,68 @@ font-size:14px;
 <div id="list"></div>
 </section>
 
+<!-- 音乐 -->
+<audio id="music" preload="auto">
+<source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_2c9b2c8f5b.mp3?filename=soft-piano-ambient-110397.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 
-let lang="zh";
 let music=document.getElementById("music");
 
-/* ===== 登录 ===== */
-function check(){
-let v=document.getElementById("name").value;
-
-if(v==="叶尔祺"){
-document.getElementById("login").style.display="none";
-document.getElementById("main").style.display="flex";
-document.getElementById("qa").style.display="flex";
-loadMsg();
-}else{
-document.getElementById("msg").innerText="Wrong Name";
-}
-}
-
-/* ===== 音乐（必须用户点击才允许） ===== */
+/* 🎵 音乐（浏览器必须用户触发） */
 function toggleMusic(){
 if(music.paused){
-music.play().catch(()=>alert("浏览器阻止自动播放，请再点一次🎵"));
+music.play().catch(()=>alert("点击页面任意位置后再试 🎵"));
 }else{
 music.pause();
 }
 }
 
-/* ===== 黑白 ===== */
+/* 🌓 */
 function toggleTheme(){
 document.body.classList.toggle("dark");
 }
 
-/* ===== 留言系统（localStorage） ===== */
+/* 💬 留言系统（支持“回复”） */
 function addMsg(){
 let val=document.getElementById("q").value;
 if(!val)return;
 
 let msgs=JSON.parse(localStorage.getItem("msgs")||"[]");
-msgs.push(val);
+
+msgs.push({
+text:val,
+reply:""   // 预留回复
+});
+
 localStorage.setItem("msgs",JSON.stringify(msgs));
 
 document.getElementById("q").value="";
 render();
 }
 
-function loadMsg(){
+/* 回复 */
+function replyMsg(i){
+let r=prompt("Reply:");
+if(!r)return;
+
+let msgs=JSON.parse(localStorage.getItem("msgs")||"[]");
+msgs[i].reply=r;
+
+localStorage.setItem("msgs",JSON.stringify(msgs));
 render();
 }
 
+/* 删除 */
+function del(i){
+let msgs=JSON.parse(localStorage.getItem("msgs")||"[]");
+msgs.splice(i,1);
+localStorage.setItem("msgs",JSON.stringify(msgs));
+render();
+}
+
+/* 渲染 */
 function render(){
 let box=document.getElementById("list");
 box.innerHTML="";
@@ -207,25 +218,19 @@ let msgs=JSON.parse(localStorage.getItem("msgs")||"[]");
 msgs.forEach((m,i)=>{
 let div=document.createElement("div");
 div.className="msg";
+
 div.innerHTML=`
-<span>${m}</span>
+<div>${m.text}</div>
+${m.reply ? `<div style="opacity:0.6">↳ ${m.reply}</div>` : ""}
+<button onclick="replyMsg(${i})">Reply</button>
 <button onclick="del(${i})">x</button>
 `;
+
 box.appendChild(div);
 });
 }
 
-function del(i){
-let msgs=JSON.parse(localStorage.getItem("msgs")||"[]");
-msgs.splice(i,1);
-localStorage.setItem("msgs",JSON.stringify(msgs));
 render();
-}
-
-/* ===== 中英文 ===== */
-function toggleLang(){
-alert("当前版本已精简语言系统（可下一版升级）");
-}
 
 </script>
 
