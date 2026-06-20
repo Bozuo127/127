@@ -11,16 +11,23 @@ margin:0;
 font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue";
 background:#fff;
 color:#111;
-transition:0.4s;
+transition:0.3s;
 }
 
-/* 顶部 */
+/* 黑夜模式 */
+.dark{
+background:#000;
+color:#fff;
+}
+
+/* 顶部按钮 */
 .topbar{
 position:fixed;
-top:18px;
-right:18px;
+top:15px;
+right:15px;
 display:flex;
 gap:10px;
+z-index:10;
 }
 
 .topbar button{
@@ -30,45 +37,37 @@ padding:6px 12px;
 border-radius:20px;
 cursor:pointer;
 font-size:12px;
+color:inherit;
 }
 
-/* 页面区块 */
+/* 页面布局 */
 section{
 height:100vh;
 display:flex;
-flex-direction:column;
 justify-content:center;
 align-items:center;
+flex-direction:column;
 text-align:center;
 padding:20px;
 }
 
-/* Apple大标题 */
 h1{
-font-size:56px;
+font-size:52px;
 margin:0;
 font-weight:600;
 letter-spacing:-1px;
 }
 
-p{
-max-width:600px;
-line-height:1.7;
-opacity:0.75;
-margin-top:12px;
-}
-
-/* 输入 */
 input{
 padding:12px;
 border-radius:12px;
-border:1px solid #ddd;
+border:1px solid #ccc;
 text-align:center;
 margin-top:15px;
+outline:none;
 width:220px;
 }
 
-/* 按钮 */
 button{
 margin-top:12px;
 padding:10px 16px;
@@ -79,27 +78,14 @@ background:#111;
 color:#fff;
 }
 
-/* 白色主题按钮反转 */
-.alt{
+.dark button{
 background:#fff;
-border:1px solid #111;
-color:#111;
+color:#000;
 }
 
-/* Q&A */
-textarea{
-width:280px;
-height:120px;
-margin-top:10px;
-padding:10px;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-/* 分割线感 */
 .small{
-font-size:14px;
 opacity:0.6;
+font-size:14px;
 margin-top:10px;
 }
 </style>
@@ -109,60 +95,51 @@ margin-top:10px;
 
 <!-- 顶部 -->
 <div class="topbar">
-<button onclick="lang()">EN/中</button>
+<button onclick="toggleLang()">EN/中</button>
+<button onclick="toggleTheme()">🌓</button>
 <button onclick="toggleMusic()">🎵</button>
 </div>
 
-<!-- ===== 1 HOME ===== -->
-<section id="home">
-
-<h1>Say My Name</h1>
-
-<p id="sub">请输入你的名字进入</p>
+<!-- ===== LOGIN ===== -->
+<section id="login">
+<h1 id="title">Say My Name</h1>
 
 <input id="name" placeholder="name">
 <button onclick="check()">Enter</button>
 
 <p id="msg" class="small"></p>
 
-<!-- 音乐 -->
-<audio id="music" src="https://www.bensound.com/bensound-music/bensound-happyrock.mp3"></audio>
-
-<button class="alt" onclick="playMusic()">Play Music</button>
-
+<!-- 音乐（点击播放） -->
+<audio id="music" src="https://www.bensound.com/bensound-music/bensound-sunny.mp3"></audio>
 </section>
 
-<!-- ===== 2 ABOUT ===== -->
-<section id="about" style="display:none">
+<!-- ===== MAIN ===== -->
+<section id="main" style="display:none">
 
-<h1 id="title">Ye Erqi</h1>
+<h1 id="nameTitle">叶尔祺</h1>
 
 <p id="intro">
 宁波大学 · 电气工程 · 大二 · 19岁
 </p>
 
-<p id="desc">
-兴趣：乒乓球 / 足球 / 阅读<br>
-最爱：《球状闪电》<br>
-Life song：Hey Jude<br><br>
-<span style="opacity:0.5">strive for your future</span>
+<p id="hobby">
+🏓 乒乓球<br>
+⚽ 足球<br>
+📚 阅读：《球状闪电》<br>
+🎵 Hey Jude
 </p>
 
+<p class="small">
+strive for your future
+</p>
 </section>
 
-<!-- ===== 3 Q&A ===== -->
+<!-- ===== Q&A ===== -->
 <section id="qa" style="display:none">
 
 <h1>Q&A</h1>
 
-<p class="small">
-Send your question to:
-<br>
-15258895590@163.com
-</p>
-
-<textarea id="q" placeholder="ask something..."></textarea>
-<br>
+<input id="q" placeholder="ask something">
 <button onclick="send()">Send</button>
 
 <p class="small">（会尽力回复！）</p>
@@ -171,23 +148,23 @@ Send your question to:
 
 <script>
 
-let en=false;
+let lang="zh";
 let music=document.getElementById("music");
 
-/* ===== 验证 ===== */
+/* ===== 登录 ===== */
 function check(){
 let v=document.getElementById("name").value;
 
 if(v==="叶尔祺"){
-document.getElementById("home").style.display="none";
-document.getElementById("about").style.display="flex";
+document.getElementById("login").style.display="none";
+document.getElementById("main").style.display="flex";
 document.getElementById("qa").style.display="flex";
 }else{
 document.getElementById("msg").innerText="Wrong Name";
 }
 }
 
-/* ===== 邮件 ===== */
+/* ===== 邮件发送 ===== */
 function send(){
 let q=document.getElementById("q").value;
 if(!q)return;
@@ -196,50 +173,37 @@ window.location.href=
 "mailto:15258895590@163.com?subject=Q&A&body="+encodeURIComponent(q);
 }
 
-/* ===== 音乐 ===== */
-function playMusic(){
-music.play();
-}
-
-/* ===== 切换语言（结构化） ===== */
-const langPack={
-zh:{
-sub:"请输入你的名字进入",
-intro:"宁波大学 · 电气工程 · 大二 · 19岁",
-desc:`兴趣：乒乓球 / 足球 / 阅读<br>
-最爱：《球状闪电》<br>
-Life song：Hey Jude<br><br>
-<span style="opacity:0.5">strive for your future</span>`
-},
-en:{
-sub:"Enter your name",
-intro:"Ningbo University · Electrical Engineering · Sophomore · 19",
-desc:`Table Tennis / Football / Reading<br>
-Favorite: Ball Lightning<br>
-Life song: Hey Jude<br><br>
-<span style="opacity:0.5">strive for your future</span>`
-}
-};
-
-function lang(){
-en=!en;
-document.getElementById("sub").innerHTML =
-en ? langPack.en.sub : langPack.zh.sub;
-
-document.getElementById("intro").innerHTML =
-en ? langPack.en.intro : langPack.zh.intro;
-
-document.getElementById("desc").innerHTML =
-en ? langPack.en.desc : langPack.zh.desc;
-}
-
-/* ===== 音乐控制 ===== */
+/* ===== 音乐控制（必须点击才能播放） ===== */
 function toggleMusic(){
 if(music.paused){
 music.play();
 }else{
 music.pause();
 }
+}
+
+/* ===== 黑白模式 ===== */
+function toggleTheme(){
+document.body.classList.toggle("dark");
+}
+
+/* ===== 中英文切换 ===== */
+const i18n={
+zh:{
+intro:"宁波大学 · 电气工程 · 大二 · 19岁",
+hobby:"🏓 乒乓球<br>⚽ 足球<br>📚 阅读：《球状闪电》<br>🎵 Hey Jude"
+},
+en:{
+intro:"Ningbo University · Electrical Engineering · Sophomore · 19",
+hobby:"🏓 Table Tennis<br>⚽ Football<br>📚 Reading: Ball Lightning<br>🎵 Hey Jude"
+}
+};
+
+function toggleLang(){
+lang = (lang==="zh") ? "en" : "zh";
+
+document.getElementById("intro").innerHTML = i18n[lang].intro;
+document.getElementById("hobby").innerHTML = i18n[lang].hobby;
 }
 
 </script>
