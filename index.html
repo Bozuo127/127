@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ye Erqi</title>
+
+<style>
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",Arial;
+background:#000;
+color:#fff;
+transition:0.3s;
+}
+
+.light{
+background:#fff;
+color:#000;
+}
+
+.topbar{
+position:fixed;
+top:15px;
+right:15px;
+display:flex;
+gap:10px;
+}
+
+.topbar button{
+border:1px solid rgba(255,255,255,0.3);
+background:none;
+color:inherit;
+padding:6px 10px;
+border-radius:20px;
+cursor:pointer;
+font-size:12px;
+}
+
+.center{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+text-align:center;
+padding:20px;
+}
+
+h1{
+font-size:48px;
+margin:10px 0;
+font-weight:600;
+}
+
+input{
+padding:12px;
+border-radius:10px;
+border:none;
+text-align:center;
+margin-top:10px;
+width:200px;
+}
+
+button{
+margin-top:10px;
+padding:10px 16px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+background:#fff;
+color:#000;
+}
+
+.light button{
+background:#000;
+color:#fff;
+}
+
+.page{
+display:none;
+padding:80px 20px;
+max-width:700px;
+margin:auto;
+line-height:1.8;
+}
+
+.section{
+margin-bottom:30px;
+}
+
+a{
+color:inherit;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+<button onclick="toggleLang()">EN/中</button>
+<button onclick="toggleTheme()">🌓</button>
+</div>
+
+<!-- 登录 -->
+<div class="center" id="login">
+<h1>Say My Name</h1>
+
+<input id="name" placeholder="name">
+<button onclick="check()">Enter</button>
+
+<p id="msg"></p>
+</div>
+
+<!-- 主内容 -->
+<div class="page" id="main">
+
+<div class="section">
+<h1 id="title">叶尔祺</h1>
+<p id="intro">宁波大学 · 电气工程 · 大二 · 19岁</p>
+</div>
+
+<div class="section">
+<h2 id="hobbyT">兴趣爱好</h2>
+<p id="hobby">
+🏓 乒乓球<br>
+⚽ 足球<br>
+📚 阅读：《球状闪电》<br>
+🎵 Hey Jude
+</p>
+</div>
+
+<div class="section">
+<h2>Q&A</h2>
+
+<input id="q" placeholder="ask something">
+<br>
+<button onclick="send()">Send</button>
+
+<p style="opacity:0.6;margin-top:10px;">
+（会尽力回复！）
+</p>
+</div>
+
+</div>
+
+<script>
+
+let en=false;
+
+/* 登录 */
+function check(){
+let v=document.getElementById("name").value;
+
+if(v==="叶尔祺"){
+document.getElementById("login").style.display="none";
+document.getElementById("main").style.display="block";
+}else{
+document.getElementById("msg").innerText="Wrong Name";
+}
+}
+
+/* 邮件发送 */
+function send(){
+let q=document.getElementById("q").value;
+if(!q)return;
+
+window.location.href=
+"mailto:15258895590@163.com?subject=Q&A&body="+encodeURIComponent(q);
+}
+
+/* 语言切换（真正统一） */
+const langPack={
+zh:{
+intro:"宁波大学 · 电气工程 · 大二 · 19岁",
+hobby:"🏓 乒乓球<br>⚽ 足球<br>📚 阅读：《球状闪电》<br>🎵 Hey Jude"
+},
+en:{
+intro:"Ningbo University · Electrical Engineering · Sophomore · 19",
+hobby:"🏓 Table Tennis<br>⚽ Football<br>📚 Reading: Ball Lightning<br>🎵 Hey Jude"
+}
+};
+
+function toggleLang(){
+en=!en;
+document.getElementById("intro").innerHTML =
+en ? langPack.en.intro : langPack.zh.intro;
+
+document.getElementById("hobby").innerHTML =
+en ? langPack.en.hobby : langPack.zh.hobby;
+}
+
+/* 主题 */
+function toggleTheme(){
+document.body.classList.toggle("light");
+}
+
+</script>
+
+</body>
+</html>
